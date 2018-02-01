@@ -14,31 +14,10 @@ public class Entity_script : MonoBehaviour {
     /// </summary>
     Vector3 pos;
 
-    // <summary>
-    /// Player controls
-    /// </summary>
-    public KeyCode UpKey, DownKey, LeftKey, RightKey;
 
-    protected void Move()
+    protected void Move(Vector3 rel)
     {
-        bool up = Input.GetKey(UpKey);
-        bool down = Input.GetKey(DownKey);
-        bool left = Input.GetKey(LeftKey);
-        bool right = Input.GetKey(RightKey);
-
-        if (transform.position == pos)
-        {
-            if (up)
-                pos += Vector3.up;
-            else if (down)
-                pos += Vector3.down;
-            else if (left)
-                pos += Vector3.left;
-            else if (right)
-                pos += Vector3.right;
-        }
-
-        transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
+        if (transform.position == pos) pos += rel;
     }
 
     // Use this for initialization
@@ -50,11 +29,11 @@ public class Entity_script : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-
         // Move
-        Move();
+        transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
     }
+    
 
 }
