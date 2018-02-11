@@ -288,6 +288,7 @@
     <Compile Include="Assets\Recycled assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Entity_script.cs" />
     <Compile Include="Assets\Scripts\Player_script.cs" />
+    <Compile Include="Assets\Scripts\SceneControl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

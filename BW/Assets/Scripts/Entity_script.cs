@@ -41,7 +41,6 @@ public class Entity_script : MonoBehaviour {
 
         pos = transform.position;
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
-        Debug.Log(tm);
 
     }
 
