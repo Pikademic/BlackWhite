@@ -9,7 +9,7 @@ public class SceneControl : MonoBehaviour {
     // <summary>
     /// Player controls
     /// </summary>
-    public KeyCode ResetKey;
+    public KeyCode ResetKey, HardResetKey;
 
     /// <summary>
     /// THe player gameobject
@@ -43,6 +43,9 @@ public class SceneControl : MonoBehaviour {
         // Reset scene when reset key is pressed
         if (Input.GetKeyDown(ResetKey))
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        if (Input.GetKeyDown(HardResetKey))
+            SceneManager.LoadScene(0);
 
         // Advance level when landmark is reached
         if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
