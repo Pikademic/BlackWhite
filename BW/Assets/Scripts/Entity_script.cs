@@ -12,8 +12,8 @@ public class Entity_script : MonoBehaviour {
     /// <summary>
     /// Tilemap
     /// </summary>
-    public UnityEngine.Tilemaps.Tilemap tm;
-
+    private UnityEngine.Tilemaps.Tilemap tm;
+    
     /// <summary>
     /// Tile that entity "paints"
     /// </summary>
@@ -22,7 +22,7 @@ public class Entity_script : MonoBehaviour {
     /// <summary>
     /// Future position
     /// </summary>
-    Vector3 pos;
+    private Vector3 pos;
 
 
     protected void Move(Vector3 rel)
