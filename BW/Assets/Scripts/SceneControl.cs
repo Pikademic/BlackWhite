@@ -25,16 +25,22 @@ public class SceneControl : MonoBehaviour {
     /// Tilemap
     /// </summary>
     private UnityEngine.Tilemaps.Tilemap tm;
+    private BoundsInt tm_bounds;
 
     /// <summary>
     /// Next level
     /// </summary>
     public Scene nextLevel;
-    
+
+    /// <summary>
+    /// "Fill" type level? Otherwise, "reach the landmark"
+    /// </summary>
+    public bool fill;
 
     // Use this for initialization
     void Start () {
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
+        tm_bounds = tm.cellBounds;
     }
 	
 	// Update is called once per frame
@@ -47,8 +53,19 @@ public class SceneControl : MonoBehaviour {
         if (Input.GetKeyDown(HardResetKey))
             SceneManager.LoadScene(0);
 
-        // Advance level when landmark is reached
-        if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
+
+        // Advance level when landmark is reached, or all "landmark" is removed
+        if (fill)
+        {
+            UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
+            int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
+
+            if (num_lm_tiles < 2)
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        else
+            if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

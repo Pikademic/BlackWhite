@@ -47,7 +47,6 @@ public class Entity_script : MonoBehaviour {
     // Update is called once per frame
     void LateUpdate()
     {
-        // Move
         transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
     }
     
