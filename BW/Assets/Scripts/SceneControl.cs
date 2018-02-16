@@ -28,19 +28,18 @@ public class SceneControl : MonoBehaviour {
     private BoundsInt tm_bounds;
 
     /// <summary>
-    /// Next level
+    /// Objective modes
     /// </summary>
-    public Scene nextLevel;
-
-    /// <summary>
-    /// "Fill" type level? Otherwise, "reach the landmark"
-    /// </summary>
-    public bool fill;
+    public enum objective { FILL, GOAL, EXIT }
+    public objective obj;
 
     // Use this for initialization
     void Start () {
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
         tm_bounds = tm.cellBounds;
+
+        //Debug.Log(cameraBounds());
+        Debug.Log(tm_bounds);
     }
 	
 	// Update is called once per frame
@@ -56,16 +55,43 @@ public class SceneControl : MonoBehaviour {
 
 
         // Advance level when landmark is reached, or all "landmark" is removed
-        if (fill)
+        switch (obj)
         {
-            UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
-            int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
+            case objective.FILL:
+                UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
+                int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
 
-            if (num_lm_tiles < 2)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-        else
-            if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                if (num_lm_tiles < 2)
+                    nextLevel();
+                break;
+
+            case objective.GOAL:
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
+                    nextLevel();
+                break;
+
+            case objective.EXIT:
+                
+                break;
+
+            default:
+                break;
+        }   
     }
+
+    // Next level
+    private void nextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    // Get camera bounds
+    private Vector3 cameraBounds()
+    {
+
+        Camera camera = GetComponent<Camera>();
+        Vector3 p = camera.ViewportToWorldPoint(new Vector3(1, 1, camera.nearClipPlane));
+        return p;
+    }
+
 }
