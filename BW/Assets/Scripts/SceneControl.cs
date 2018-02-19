@@ -37,9 +37,6 @@ public class SceneControl : MonoBehaviour {
     void Start () {
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
         tm_bounds = tm.cellBounds;
-
-        //Debug.Log(cameraBounds());
-        Debug.Log(tm_bounds);
     }
 	
 	// Update is called once per frame

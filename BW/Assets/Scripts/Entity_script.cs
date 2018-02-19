@@ -4,7 +4,8 @@ using UnityEngine;
 
 
 
-public class Entity_script : MonoBehaviour {
+public class Entity_script : MonoBehaviour
+{
 
     /// <summary>
     /// Movement speed
@@ -15,7 +16,7 @@ public class Entity_script : MonoBehaviour {
     /// Tilemap
     /// </summary>
     private UnityEngine.Tilemaps.Tilemap tm;
-    
+
     /// <summary>
     /// Tile that entity "paints"
     /// </summary>
@@ -29,16 +30,14 @@ public class Entity_script : MonoBehaviour {
     /// <summary>
     /// Entity sprite states
     /// </summary>
-    protected enum spriteState { NORMAL, PULSE, FADE, FADE_B, FADE_W }
-    protected spriteState sp_st = spriteState.PULSE;
+    protected enum spriteState { NORMAL, FADEGRAY, FADEBACK }
+    protected spriteState sp_st = spriteState.FADEGRAY;
     protected SpriteRenderer sp;
+    public float fadeSpeed;
+    private float nextFadeTime;
 
     protected void Move(Vector3 rel)
     {
-        // Revert sprite to normal
-        if (sp_st == spriteState.PULSE)     sp_st = spriteState.FADE;
-
-
         if (transform.position == pos) // if entity has finished its previous move
             if (tm.GetTile(Vector3Int.FloorToInt(pos + rel)) != mytile) // if entity is not attempting to move to a tile of its own color
             {
@@ -53,32 +52,33 @@ public class Entity_script : MonoBehaviour {
         sp = GetComponent<SpriteRenderer>();
         pos = transform.position;
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
+
+        nextFadeTime = Time.time;
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
 
+        Debug.Log(Time.time);
         // Update sprite color
-        if (sp_st == spriteState.PULSE)
-            sp.color = Color.Lerp(mytile.color, InvertColor(mytile.color), Mathf.PingPong(Time.time/2, 1));
-        if (sp_st == spriteState.FADE)
-        {   sp.color = Color.Lerp(sp.color, mytile.color, 0.2f);
-            if (Vector4.Distance(sp.color - mytile.color, Vector4.zero) < 0.01f)
-            {
-                sp.color = mytile.color;
-                sp_st = spriteState.NORMAL;
-            }
-                
+        switch (sp_st)
+        {
+            
+            case spriteState.NORMAL:
+                //if (transform.position == pos) sp_st = spriteState.FADEGRAY;
+                break;
+            case spriteState.FADEGRAY:
+                sp.color = Vector4.MoveTowards(sp.color, Color.gray, fadeSpeed);
+                if (sp.color == Color.gray) sp_st = spriteState.FADEBACK;
+                break;
+            case spriteState.FADEBACK:
+                sp.color = Vector4.MoveTowards(sp.color, mytile.color, fadeSpeed);
+                if (sp.color == mytile.color) sp_st = spriteState.NORMAL;
+                break;
         }
-        Debug.Log(Equals(transform.position, pos));
+
         // Update object position
         transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
     }
-    
-    private Color InvertColor(Color c)
-    {
-        return new Color(1f - c.r, 1f - c.g, 1f - c.b, c.a);
-    }
-
 }
