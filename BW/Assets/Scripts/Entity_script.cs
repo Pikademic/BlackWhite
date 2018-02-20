@@ -33,17 +33,22 @@ public class Entity_script : MonoBehaviour
     protected enum spriteState { NORMAL, FADEGRAY, FADEBACK }
     protected spriteState sp_st = spriteState.FADEGRAY;
     protected SpriteRenderer sp;
-    public float fadeSpeed;
-    private float nextFadeTime;
+    private float fadeSpeed = 0.01f;
+    private float nextFadeTime = 0;
 
-    protected void Move(Vector3 rel)
+    protected bool Move(Vector3 rel)
     {
         if (transform.position == pos) // if entity has finished its previous move
             if (tm.GetTile(Vector3Int.FloorToInt(pos + rel)) != mytile) // if entity is not attempting to move to a tile of its own color
             {
                 tm.SetTile(Vector3Int.FloorToInt(pos), mytile); // place the entity's tile in its current position
                 pos += rel; // set destination
+
+                nextFadeTime = Time.time + 3f;
+                return true;
             }
+
+        return false;
     }
 
     // Use this for initialization
@@ -59,14 +64,12 @@ public class Entity_script : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-
-        Debug.Log(Time.time);
         // Update sprite color
         switch (sp_st)
         {
             
             case spriteState.NORMAL:
-                //if (transform.position == pos) sp_st = spriteState.FADEGRAY;
+                if (Time.time > nextFadeTime && transform.position == pos) sp_st = spriteState.FADEGRAY;
                 break;
             case spriteState.FADEGRAY:
                 sp.color = Vector4.MoveTowards(sp.color, Color.gray, fadeSpeed);

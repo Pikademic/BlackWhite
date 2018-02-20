@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Test_brandon.unity
+- path: Assets/exit_L1.unity
   isLoaded: 1
   isActive: 1

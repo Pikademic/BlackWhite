@@ -43,11 +43,9 @@ public class SceneControl : MonoBehaviour {
 	void Update () {
 
         // Reset scene when reset key is pressed
-        if (Input.GetKeyDown(ResetKey))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (Input.GetKeyDown(ResetKey)) relativeLevel(0);
 
-        if (Input.GetKeyDown(HardResetKey))
-            SceneManager.LoadScene(0);
+        if (Input.GetKeyDown(HardResetKey)) relativeLevel(1);
 
 
 
@@ -58,17 +56,18 @@ public class SceneControl : MonoBehaviour {
                 UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
                 int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
 
-                if (num_lm_tiles < 2)
-                    nextLevel();
+                if (num_lm_tiles < 2) relativeLevel(1);
                 break;
 
             case objective.GOAL:
-                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
-                    nextLevel();
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(1);
                 break;
 
             case objective.EXIT:
-                
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(0);
+
+                if (!tm_bounds.Contains(Vector3Int.FloorToInt(player.transform.position)))      relativeLevel(1);
+
                 break;
 
             default:
@@ -77,9 +76,9 @@ public class SceneControl : MonoBehaviour {
     }
 
     // Next level
-    private void nextLevel()
+    private void relativeLevel(int rel)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + rel);
     }
 
     // Get camera bounds

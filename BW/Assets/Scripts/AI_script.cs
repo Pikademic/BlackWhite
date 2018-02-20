@@ -30,7 +30,11 @@ public class AI_script : Entity_script
                 Move(Vector3.left);
                 break;
             case algorithm.SPIRAL:
-                Debug.Log("Spiral not implimented.");
+                if (!Move(Vector3.left))
+                    if (!Move(Vector3.down))
+                        if (!Move(Vector3.right))
+                            if (!Move(Vector3.up))
+                                break;
                 break;
             case algorithm.TEST:
                 Move(Vector3.left * 2);
