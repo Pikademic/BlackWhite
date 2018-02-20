@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/fill_L5.unity
-  isLoaded: 1
-  isActive: 1

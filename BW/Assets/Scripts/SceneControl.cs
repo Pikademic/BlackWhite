@@ -20,6 +20,7 @@ public class SceneControl : MonoBehaviour {
     /// The goal tile
     /// </summary>
     public UnityEngine.Tilemaps.Tile landmark;
+    public UnityEngine.Tilemaps.Tile landmark2;
 
     /// <summary>
     /// Tilemap
@@ -60,6 +61,7 @@ public class SceneControl : MonoBehaviour {
         {
             UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
             int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
+            num_lm_tiles += System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark2).Length;
 
             if (num_lm_tiles < 2)
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);

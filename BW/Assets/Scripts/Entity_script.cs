@@ -18,12 +18,14 @@ public class Entity_script : MonoBehaviour {
     /// Tile that entity "paints"
     /// </summary>
     public UnityEngine.Tilemaps.Tile mytile;
+    public UnityEngine.Tilemaps.Tile reversaltile;
+    public UnityEngine.Tilemaps.Tile originalTile;
+    public UnityEngine.Tilemaps.Tile othertile;
 
     /// <summary>
     /// Future position
     /// </summary>
     private Vector3 pos;
-
 
     protected void Move(Vector3 rel)
     {
@@ -33,21 +35,33 @@ public class Entity_script : MonoBehaviour {
                 tm.SetTile(Vector3Int.FloorToInt(pos), mytile); // place the entity's tile in its current position
                 pos += rel; // set destination
             }
+
     }
 
     // Use this for initialization
     void Start()
     {
-
         pos = transform.position;
         tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
-
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
         transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
+        if (transform.position == pos)
+            if (tm.GetTile(Vector3Int.FloorToInt(transform.position)) == reversaltile)
+                StartCoroutine("ReverseColor");
+    }
+
+    IEnumerator ReverseColor()
+    {
+        Debug.Log("switching color");
+        if (mytile == originalTile) mytile = othertile;
+        else mytile = originalTile;
+        GetComponent<SpriteRenderer>().color = mytile.color;
+        tm.SetTile(Vector3Int.FloorToInt(transform.position), mytile);
+        yield return null;
     }
     
 
