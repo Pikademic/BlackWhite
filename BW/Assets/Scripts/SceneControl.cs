@@ -29,14 +29,10 @@ public class SceneControl : MonoBehaviour {
     private BoundsInt tm_bounds;
 
     /// <summary>
-    /// Next level
+    /// Objective modes
     /// </summary>
-    public Scene nextLevel;
-
-    /// <summary>
-    /// "Fill" type level? Otherwise, "reach the landmark"
-    /// </summary>
-    public bool fill;
+    public enum objective { FILL, GOAL, EXIT }
+    public objective obj;
 
     // Use this for initialization
     void Start () {
@@ -48,26 +44,52 @@ public class SceneControl : MonoBehaviour {
 	void Update () {
 
         // Reset scene when reset key is pressed
-        if (Input.GetKeyDown(ResetKey))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (Input.GetKeyDown(ResetKey)) relativeLevel(0);
 
-        if (Input.GetKeyDown(HardResetKey))
-            SceneManager.LoadScene(0);
+        if (Input.GetKeyDown(HardResetKey)) relativeLevel(1);
 
 
 
         // Advance level when landmark is reached, or all "landmark" is removed
-        if (fill)
+        switch (obj)
         {
-            UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
-            int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
-            num_lm_tiles += System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark2).Length;
+            case objective.FILL:
+                UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
+                int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
+                num_lm_tiles += System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark2).Length;
 
-            if (num_lm_tiles < 2)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-        else
-            if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                if (num_lm_tiles < 2) relativeLevel(1);
+                break;
+
+            case objective.GOAL:
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(1);
+                break;
+
+            case objective.EXIT:
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(0);
+
+                if (!tm_bounds.Contains(Vector3Int.FloorToInt(player.transform.position)))      relativeLevel(1);
+
+                break;
+
+            default:
+                break;
+        }   
     }
+
+    // Next level
+    private void relativeLevel(int rel)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + rel);
+    }
+
+    // Get camera bounds
+    private Vector3 cameraBounds()
+    {
+
+        Camera camera = GetComponent<Camera>();
+        Vector3 p = camera.ViewportToWorldPoint(new Vector3(1, 1, camera.nearClipPlane));
+        return p;
+    }
+
 }
