@@ -56,7 +56,9 @@ public class SceneControl : MonoBehaviour {
             case objective.FILL:
                 UnityEngine.Tilemaps.TileBase[] tm_array = tm.GetTilesBlock(tm_bounds);
                 int num_lm_tiles = System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark).Length;
-                num_lm_tiles += System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark2).Length;
+
+                if (landmark2 != null)
+                    num_lm_tiles += System.Array.FindAll<UnityEngine.Tilemaps.TileBase>(tm_array, x => x == landmark2).Length;
 
                 if (num_lm_tiles < 2) relativeLevel(1);
                 break;
