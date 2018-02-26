@@ -18,6 +18,13 @@ public class AI_script : Entity_script
     public float nextMoveTime = 5;
 
 
+    /// <summary>
+    /// Last move
+    /// </summary>
+    private enum move { NORTH, EAST, SOUTH, WEST }
+    private move nextMove = move.EAST;
+
+
     private void Update()
     {
         // Move
@@ -44,7 +51,27 @@ public class AI_script : Entity_script
                                     break;
                     break;
                 case algorithm.TEST:
-                    Move(Vector3.left * 2);
+                    if (atPos())
+                        switch(nextMove)
+                        {
+                            case move.NORTH:
+                                Move(Vector3.up);
+                                    nextMove++;
+                                break;
+                            case move.EAST:
+                                Move(Vector3.right); //Move south
+                                    nextMove++;
+                                break;
+                            case move.SOUTH:
+                                Move(Vector3.down); //Move west
+                                    nextMove++;
+                                break;
+                            case move.WEST:
+                                Move(Vector3.left); //Move north
+                                    nextMove = move.NORTH;
+                                break;
+                        }
+                    Debug.Log(nextMove);
                     break;
                 default:
                     Debug.Log("No algorithm selected.");

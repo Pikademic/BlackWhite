@@ -68,7 +68,7 @@ public class SceneControl : MonoBehaviour {
                 break;
 
             case objective.EXIT:
-                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(0);
+                if (tm.GetTile(Vector3Int.FloorToInt(player.transform.position)) == landmark)   relativeLevel(1);
 
                 if (!tm_bounds.Contains(Vector3Int.FloorToInt(player.transform.position)))      relativeLevel(1);
 

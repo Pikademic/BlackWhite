@@ -11,8 +11,6 @@ public class Player_script : Entity_script
     public KeyCode UpKey, DownKey, LeftKey, RightKey;
 
 
-
-
     private void Update()
     {
         // Move

@@ -42,7 +42,7 @@ public class CameraControl : MonoBehaviour {
                 if (!cameraBounds.Contains(player.transform.position)) state = cameraStates.FOLLOW;
                 break;
             case cameraStates.FOLLOW:
-                transform.position = player.transform.position + offset;
+                transform.position = Vector3.Lerp(player.transform.position + offset, transform.position, 0.9f);
                 break;
             default:
                 break;

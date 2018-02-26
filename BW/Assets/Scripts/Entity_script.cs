@@ -34,33 +34,52 @@ public class Entity_script : MonoBehaviour
     /// Entity sprite states
     /// </summary>
     protected enum spriteState { NORMAL, FADEGRAY, FADEBACK }
-    protected spriteState sp_st = spriteState.FADEGRAY;
+    protected spriteState sp_st = spriteState.NORMAL;
     protected SpriteRenderer sp;
     private float fadeSpeed = 0.01f;
-    private float nextFadeTime = 0;
+    private float nextFadeTime; // set to Time.time in Start for bvehaviour between levels
 
+    /// <summary>
+    /// Attempt to move
+    /// </summary>
+    /// <param name="rel"></param>
+    /// <returns> Whether the entitiy moved </returns>
     protected bool Move(Vector3 rel)
     {
-        if (transform.position == pos) // if entity has finished its previous move
-            if (tm.GetTile(Vector3Int.FloorToInt(pos + rel)) != mytile) // if entity is not attempting to move to a tile of its own color
+        // Check if entity has finished its previous move
+        if (transform.position == pos)
+        {
+            // Check if desired move is valid
+            UnityEngine.Tilemaps.TileBase nextTile = tm.GetTile(Vector3Int.FloorToInt(pos + rel));
+            if ((nextTile != mytile) && (nextTile != null))
             {
+                // Execute the move
                 tm.SetTile(Vector3Int.FloorToInt(pos), mytile); // place the entity's tile in its current position
                 pos += rel; // set destination
 
                 nextFadeTime = Time.time + 3f;
                 return true;
             }
+        }
 
         return false;
     }
 
-    // Use this for initialization
+    /// <summary>
+    /// Inutialize variables
+    /// </summary>
     void Start()
     {
+        // Get sprite renderer
         sp = GetComponent<SpriteRenderer>();
-        pos = transform.position;
-        tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>();
 
+        // Get "desired" positon
+        pos = transform.position;
+
+        // Get tilemap
+        tm = FindObjectOfType<UnityEngine.Tilemaps.Tilemap>(); // there can only be one!!
+
+        // Initialize next fade time
         nextFadeTime = Time.time;
     }
 
@@ -68,29 +87,48 @@ public class Entity_script : MonoBehaviour
     void LateUpdate()
     {
         // Update sprite color
-        switch (sp_st)
+        switch (sp_st) // sprite state
         {
             
             case spriteState.NORMAL:
+
+                // If entity has not moved for a while, start fading
                 if (Time.time > nextFadeTime && transform.position == pos) sp_st = spriteState.FADEGRAY;
                 break;
+
             case spriteState.FADEGRAY:
+
+                // Fade to gray
                 sp.color = Vector4.MoveTowards(sp.color, Color.gray, fadeSpeed);
+
+                // If faded, start fading back to proper color
                 if (sp.color == Color.gray) sp_st = spriteState.FADEBACK;
                 break;
+
             case spriteState.FADEBACK:
+
+                // Fade to mytile color
                 sp.color = Vector4.MoveTowards(sp.color, mytile.color, fadeSpeed);
+
+                // If proper color, reset state
                 if (sp.color == mytile.color) sp_st = spriteState.NORMAL;
                 break;
         }
 
-        // Update object position
+        // Update entity position
         transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);
+
+        // If desired position is reached, and that position contains a reversal tile, change color.
         if (transform.position == pos)
             if (tm.GetTile(Vector3Int.FloorToInt(transform.position)) == reversaltile)
                 StartCoroutine("ReverseColor");
     }
 
+
+    /// <summary>
+    /// Reverses color of entity
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ReverseColor()
     {
         Debug.Log("switching color");
@@ -99,5 +137,14 @@ public class Entity_script : MonoBehaviour
         GetComponent<SpriteRenderer>().color = mytile.color;
         tm.SetTile(Vector3Int.FloorToInt(transform.position), mytile);
         yield return null;
+    }
+
+    /// <summary>
+    /// Is the entity at desired position?
+    /// </summary>
+    /// <returns>bool</returns>
+    protected bool atPos()
+    {
+        return transform.position == pos;
     }
 }
